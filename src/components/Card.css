@@ -1,0 +1,28 @@
+.card {
+  font-size: 2em;
+  flex: 1 1 calc(100% / 6 - 0.4em);
+  outline: 0.08em solid silver;
+  margin: 0.2em;
+  display: flex;
+  cursor: default;
+}
+
+.card.hidden {
+  background: silver;
+}
+
+.card.match,
+.card.mismatch {
+  outline: 0.1em solid green;
+}
+.card.mismatch {
+  outline-color: red;
+}
+
+.card.visible {
+  cursor: not-allowed;
+}
+
+.symbol {
+  margin: auto;
+}
