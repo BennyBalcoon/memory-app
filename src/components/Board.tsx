@@ -1,18 +1,21 @@
 import React, { useState } from "react";
 import { getShuffledSymbols } from "../symbols";
 import { Card } from "./Card";
+import ProgressBar from "./ProgressBar";
 
 import "./Board.css";
+import GuessCounter from "./GuessCounter";
 
-interface Props {
-  setGuesses: React.Dispatch<React.SetStateAction<number>>;
-}
-
-const Board = ({ setGuesses }: Props) => {
+const Board = () => {
   const [symbols, setSymbols] = useState(getShuffledSymbols());
 
   const [currentPair, setCurrentPair] = useState<Array<number>>([]);
   const [matchedCardsIndex, setMatchedCardsIndex] = useState<Array<number>>([]);
+
+  const [progress, setProgress] = useState<number>(0);
+  const [isInProgress, setIsInProgress] = useState<boolean>(false);
+
+  const [guesses, setGuesses] = useState<number>(0);
 
   // check if a pair of cards matches, and return a string value to style the cards
   const checkCardVisibility = (index: number) => {
@@ -40,8 +43,10 @@ const Board = ({ setGuesses }: Props) => {
     }
 
     const newPair: Array<number> = [currentPair[0], index];
+    const newGuesses = guesses + 1;
     const matched = symbols[newPair[0]] === symbols[newPair[1]];
     setCurrentPair(newPair);
+    setGuesses(newGuesses);
     matched && setMatchedCardsIndex([...matchedCardsIndex, ...newPair]);
 
     setTimeout(() => {
@@ -50,6 +55,9 @@ const Board = ({ setGuesses }: Props) => {
   };
 
   const handleRestart = () => {
+    setGuesses(0);
+    setProgress(0);
+    setIsInProgress(false);
     setCurrentPair([]);
     setMatchedCardsIndex([]);
     setSymbols(getShuffledSymbols());
@@ -58,6 +66,7 @@ const Board = ({ setGuesses }: Props) => {
   return (
     <>
       <div className="board">
+        <GuessCounter guesses={guesses} />
         {symbols.map((symbol, index) => (
           <Card
             key={index}
@@ -72,6 +81,15 @@ const Board = ({ setGuesses }: Props) => {
         <button className="btn-restart" onClick={handleRestart}>
           Restart
         </button>
+      </div>
+      <div>
+        <ProgressBar
+          bgcolor="blue"
+          progress={progress}
+          setProgress={setProgress}
+          isInProgress={isInProgress}
+          setIsInProgress={setIsInProgress}
+        />
       </div>
     </>
   );
