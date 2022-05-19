@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { getShuffledSymbols } from "../symbols";
-import { Card } from "./Card";
+import Card from "./Card";
 import ProgressBar from "./ProgressBar";
 
 import "./Board.css";
@@ -13,7 +13,6 @@ const Board = () => {
   const [matchedCardsIndex, setMatchedCardsIndex] = useState<Array<number>>([]);
 
   const [progress, setProgress] = useState<number>(0);
-  const [isInProgress, setIsInProgress] = useState<boolean>(false);
 
   const [guesses, setGuesses] = useState<number>(0);
 
@@ -57,11 +56,17 @@ const Board = () => {
   const handleRestart = () => {
     setGuesses(0);
     setProgress(0);
-    setIsInProgress(false);
     setCurrentPair([]);
     setMatchedCardsIndex([]);
     setSymbols(getShuffledSymbols());
   };
+
+  const won: boolean = matchedCardsIndex.length === symbols.length && progress <= 100;
+  const lose: boolean = progress >= 100 && matchedCardsIndex.length !== symbols.length;
+
+  if (won) {
+    alert("won!!!");
+  }
 
   return (
     <>
@@ -76,20 +81,12 @@ const Board = () => {
             onClick={() => handleCardClick(index)}
           />
         ))}
-      </div>
-      <div className="restart">
-        <button className="btn-restart" onClick={handleRestart}>
-          Restart
-        </button>
+        {won && <p>bravo!!!</p>}
+        {lose && <p>loseeeeer !!!!</p>}
       </div>
       <div>
-        <ProgressBar
-          bgcolor="blue"
-          progress={progress}
-          setProgress={setProgress}
-          isInProgress={isInProgress}
-          setIsInProgress={setIsInProgress}
-        />
+        <ProgressBar bgcolor="blue" progress={progress} setProgress={setProgress} />
+        {progress}
       </div>
     </>
   );

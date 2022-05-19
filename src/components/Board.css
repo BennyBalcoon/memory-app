@@ -5,30 +5,3 @@
   margin: auto;
   user-select: none;
 }
-.restart {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-.btn-restart {
-  width: 100px;
-  height: 100px;
-  margin: 22px;
-  border-radius: 50px;
-  border: none;
-  font-size: 15px;
-  background-color: #2f74c0;
-  color: white;
-  transition: 0.2s all;
-  box-shadow: 0 0 10px black;
-}
-
-.btn-restart:hover {
-  background-color: #388ae2;
-}
-
-.btn-restart:active {
-  transform: scale(0.8);
-  box-shadow: 0 0 5px black;
-}
