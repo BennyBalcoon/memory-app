@@ -1,35 +1,32 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
+import Button from "./Button";
+
+import "./ProgressBar.css";
 
 interface Props {
   bgcolor: string;
   progress: number;
   setProgress: React.Dispatch<React.SetStateAction<number>>;
-  isInProgress: boolean;
-  setIsInProgress: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-const ProgressBar = ({ bgcolor, progress, setProgress, isInProgress, setIsInProgress }: Props) => {
-  const launchChrono = () => {
-    const timer = setInterval(frame, 1000);
-    function frame() {
-      if (progress > 100) {
-        clearInterval(timer);
-        setIsInProgress(false);
-      } else {
-        setIsInProgress(true);
-        setProgress(progress++);
-      }
-      return progress;
-    }
-  };
+const ProgressBar = ({ bgcolor, progress, setProgress }: Props) => {
+  const [isActive, setIsActive] = useState<boolean>(false);
 
-  const containerStyles = {
-    height: 20,
-    width: "90%",
-    backgroundColor: "#e0e0de",
-    borderRadius: 50,
-    margin: 50,
-  };
+  useEffect(() => {
+    let timer: ReturnType<typeof setInterval>;
+    if (isActive) {
+      timer = setInterval(() => {
+        setProgress((progress) => progress + 1);
+      }, 1000);
+    }
+    return () => {
+      if (progress >= 99) {
+        clearInterval(timer);
+        setIsActive(false);
+      }
+      clearInterval(timer);
+    };
+  });
 
   const fillerStyles = {
     height: "100%",
@@ -39,24 +36,16 @@ const ProgressBar = ({ bgcolor, progress, setProgress, isInProgress, setIsInProg
     transition: "width 1s ease-in-out",
   };
 
-  const labelStyles = {
-    padding: 5,
-    color: "white",
-    fontWeight: "bold",
-  };
-
   return (
-    <div style={containerStyles}>
+    <div className="pb_container">
       <div style={fillerStyles}>
-        <span style={labelStyles}></span>
+        <span className="pb_content"></span>
       </div>
-      {isInProgress ? (
-        <button style={{ cursor: "not-allowed", pointerEvents: "none" }} onClick={launchChrono}>
-          Chrono
-        </button>
-      ) : (
-        <button onClick={launchChrono}>Chrono</button>
-      )}
+      <div className="btn_container">
+        <Button label={"Start"} onClick={() => setIsActive(true)} />
+        <Button label={"Stop"} onClick={() => setIsActive(false)} />
+        <Button label={"Reset"} onClick={() => setProgress(0)} />
+      </div>
     </div>
   );
 };

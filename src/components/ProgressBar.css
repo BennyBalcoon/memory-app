@@ -1,0 +1,18 @@
+.pb_container {
+  height: 20px;
+  width: 90%;
+  background-color: #e0e0de;
+  border-radius: 50px;
+  margin: 50px;
+}
+
+.pb_content {
+  padding: 5px;
+  color: white;
+  /* font-weight: bold; */
+}
+
+.btn_container {
+  display: flex;
+  justify-content: center;
+}
