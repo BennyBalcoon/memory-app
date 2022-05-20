@@ -1,20 +1,28 @@
 import React, { useState } from "react";
+
 import { getShuffledSymbols } from "../symbols";
+
 import Card from "./Card";
 import ProgressBar from "./ProgressBar";
+import GuessCounter from "./GuessCounter";
+import WinnerInput from "./WinnerInput";
+import WinnersList from "./WinnersList";
 
 import "./Board.css";
-import GuessCounter from "./GuessCounter";
+
+const WIN_KEY = "memory-winner";
 
 const Board = () => {
   const [symbols, setSymbols] = useState(getShuffledSymbols());
-
   const [currentPair, setCurrentPair] = useState<Array<number>>([]);
   const [matchedCardsIndex, setMatchedCardsIndex] = useState<Array<number>>([]);
-
   const [progress, setProgress] = useState<number>(0);
-
   const [guesses, setGuesses] = useState<number>(0);
+  const [entries, setEntries] = useState(null);
+
+  const updateWinnersList = () => {
+    setEntries(JSON.parse(localStorage.getItem(WIN_KEY) || "[]"));
+  };
 
   // check if a pair of cards matches, and return a string value to style the cards
   const checkCardVisibility = (index: number) => {
@@ -53,6 +61,10 @@ const Board = () => {
     }, 750);
   };
 
+  const isCardFlipped = (index: number) => {
+    return currentPair.includes(index);
+  };
+
   const handleRestart = () => {
     setGuesses(0);
     setProgress(0);
@@ -63,10 +75,6 @@ const Board = () => {
 
   const won: boolean = matchedCardsIndex.length === symbols.length && progress <= 100;
   const lose: boolean = progress >= 100 && matchedCardsIndex.length !== symbols.length;
-
-  if (won) {
-    alert("won!!!");
-  }
 
   return (
     <>
@@ -79,14 +87,20 @@ const Board = () => {
             cardStyle={checkCardVisibility(index)}
             index={index}
             onClick={() => handleCardClick(index)}
+            isCardFlipped={isCardFlipped(index)}
+            progress={progress}
           />
         ))}
-        {won && <p>bravo!!!</p>}
-        {lose && <p>loseeeeer !!!!</p>}
+        {won &&
+          (entries ? (
+            <WinnersList winners={entries} />
+          ) : (
+            <WinnerInput guesses={guesses} updateWinnersList={updateWinnersList} />
+          ))}
+        {lose && <p>Tu as perdu ! Clique sur Reset et retente ta chance</p>}
       </div>
       <div>
-        <ProgressBar bgcolor="blue" progress={progress} setProgress={setProgress} />
-        {progress}
+        <ProgressBar bgcolor="blue" progress={progress} setProgress={setProgress} handleRestart={handleRestart} />
       </div>
     </>
   );
