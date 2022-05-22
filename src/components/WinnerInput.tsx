@@ -10,6 +10,7 @@ interface Props {
 
 const WinnerInput = ({ guesses, updateWinnersList }: Props) => {
   const [winner, setWinner] = useState<string>("");
+  const [isActive, setIsActive] = useState<boolean>(true);
 
   const handleWinnerSubmit: React.ChangeEventHandler<HTMLInputElement> = (event) => {
     setWinner(event.target.value);
@@ -37,20 +38,24 @@ const WinnerInput = ({ guesses, updateWinnersList }: Props) => {
     }
 
     localStorage.setItem(WIN_KEY, JSON.stringify(entries));
-    console.log(entries);
     updateWinnersList(entries);
+    setIsActive(false);
   };
 
   return (
-    <form className="highScoreInput" onSubmit={storeWinner}>
-      <p>
-        <label>
-          Bravo ! Entre ton prénom :
-          <input type="text" autoComplete="given-name" onChange={handleWinnerSubmit} value={winner} />
-        </label>
-        <button type="submit">J’ai gagné !</button>
-      </p>
-    </form>
+    <>
+      {isActive ? (
+        <form className="highScoreInput" onSubmit={storeWinner}>
+          <p>
+            <label>
+              Bravo ! Entre ton prénom :
+              <input type="text" autoComplete="given-name" onChange={handleWinnerSubmit} value={winner} />
+            </label>
+            <button type="submit">J’ai gagné !</button>
+          </p>
+        </form>
+      ) : null}
+    </>
   );
 };
 
