@@ -52,6 +52,10 @@ const Board = () => {
       return;
     }
 
+    handleNewPair(index);
+  };
+
+  const handleNewPair = (index: number) => {
     const newPair: Array<number> = [currentPair[0], index];
     const newGuesses: number = guesses + 1;
     const matched: boolean = symbols[newPair[0]] === symbols[newPair[1]];
@@ -97,7 +101,6 @@ const Board = () => {
     }
     return () => {
       if (progress === 100) {
-        console.log("ici");
         clearInterval(timer);
         toggleGame?.();
       }
