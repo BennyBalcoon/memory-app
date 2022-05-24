@@ -16,8 +16,8 @@ const WIN_KEY = "memory-winner";
 
 const Board = () => {
   const [symbols, setSymbols] = useState<Array<string>>(getShuffledSymbols());
-  const [currentPair, setCurrentPair] = useState<Array<number>>([]);
-  const [matchedCardsIndex, setMatchedCardsIndex] = useState<Array<number>>([]);
+  const [cardsFlipped, setCardsFlipped] = useState<Array<number>>([]);
+  const [matchedCardsIds, setMatchedCardsIds] = useState<Array<number>>([]);
   const [progress, setProgress] = useState<number>(0);
   const [guesses, setGuesses] = useState<number>(0);
   const [entries, setEntries] = useState(null);
@@ -27,15 +27,18 @@ const Board = () => {
     setEntries(JSON.parse(localStorage.getItem(WIN_KEY) || "[]"));
   };
 
-  // check if a pair of cards matches, and return a string value to style the cards
+  // check index for each card
+  // check if each index is in cardsFlipped array
+  // check is each index is in matchedCardsIndex array
+  // return a string value to style the cards
   const checkCardVisibility = (index: number) => {
-    const indexMatched: boolean = matchedCardsIndex.includes(index);
+    const indexMatched: boolean = matchedCardsIds.includes(index);
 
-    if (currentPair.length < 2) {
-      return indexMatched || index === currentPair[0] ? "visible" : "hidden";
+    if (cardsFlipped.length < 2) {
+      return indexMatched || index === cardsFlipped[0] ? "visible" : "hidden";
     }
 
-    if (currentPair.includes(index)) {
+    if (cardsFlipped.includes(index)) {
       return indexMatched ? "match" : "mismatch";
     }
 
@@ -43,12 +46,12 @@ const Board = () => {
   };
 
   const handleCardClick = (index: number) => {
-    if (currentPair.length === 2) {
+    if (cardsFlipped.length === 2) {
       return;
     }
 
-    if (currentPair.length === 0) {
-      setCurrentPair([index]);
+    if (cardsFlipped.length === 0) {
+      setCardsFlipped([index]);
       return;
     }
 
@@ -56,20 +59,20 @@ const Board = () => {
   };
 
   const handleNewPair = (index: number) => {
-    const newPair: Array<number> = [currentPair[0], index];
+    const newPair: Array<number> = [cardsFlipped[0], index];
     const newGuesses: number = guesses + 1;
     const matched: boolean = symbols[newPair[0]] === symbols[newPair[1]];
-    setCurrentPair(newPair);
+    setCardsFlipped(newPair);
     setGuesses(newGuesses);
-    matched && setMatchedCardsIndex([...matchedCardsIndex, ...newPair]);
+    matched && setMatchedCardsIds([...matchedCardsIds, ...newPair]);
 
     setTimeout(() => {
-      setCurrentPair([]);
+      setCardsFlipped([]);
     }, 750);
   };
 
   const isCardFlipped = (index: number) => {
-    return currentPair.includes(index);
+    return cardsFlipped.includes(index);
   };
 
   const handleStart = () => {
@@ -83,14 +86,14 @@ const Board = () => {
   const handleRestart = () => {
     setGuesses(0);
     setProgress(0);
-    setCurrentPair([]);
-    setMatchedCardsIndex([]);
+    setCardsFlipped([]);
+    setMatchedCardsIds([]);
     setSymbols(getShuffledSymbols());
   };
 
-  const won: boolean = matchedCardsIndex.length === symbols.length && progress <= 100;
+  const won: boolean = matchedCardsIds.length === symbols.length && progress <= 100;
 
-  const lose: boolean = progress >= 100 && matchedCardsIndex.length !== symbols.length;
+  const lose: boolean = progress >= 100 && matchedCardsIds.length !== symbols.length;
 
   useEffect(() => {
     let timer: ReturnType<typeof setInterval>;
